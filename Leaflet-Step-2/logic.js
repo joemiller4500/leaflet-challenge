@@ -2,7 +2,7 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_da
 var boundaryUrl = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 
 function markerSize(num) {
-  return num * 35000;
+  return num * 40000;
 }
 
 // d3.json(boundaryUrl, function(d) {
@@ -71,14 +71,14 @@ d3.json(queryUrl, function(data) {
 
   
   
-  // var satelite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  //   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-  //   tileSize: 512,
-  //   maxZoom: 18,
-  //   zoomOffset: -1,
-  //   id: "mapbox/satellite-streets-v11",
-  //   accessToken: API_KEY
-  // });
+  var satelite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/satellite-streets-v11",
+    accessToken: API_KEY
+  });
   var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
     maxZoom: 18,
@@ -86,18 +86,20 @@ d3.json(queryUrl, function(data) {
     accessToken: API_KEY
   });
   
-  // var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  //   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-  //   maxZoom: 18,
-  //   id: "outdoors-v11",
-  //   accessToken: 'pk.eyJ1Ijoiam9lbWlsbGVyNDUwMCIsImEiOiJja2Jud2RwcDkwNjk2Mm5qejBvdGh6ZHJ0In0.GCI6bvKOIR1VYDu87nY8Ow'
-  // });
+  var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "outdoors-v11",
+    accessToken: 'pk.eyJ1Ijoiam9lbWlsbGVyNDUwMCIsImEiOiJja2Jud2RwcDkwNjk2Mm5qejBvdGh6ZHJ0In0.GCI6bvKOIR1VYDu87nY8Ow'
+  });
   
   var quakes = L.layerGroup(locations);
   
   // Create a baseMaps object
   var baseMaps = {
-    "Light Map": lightmap
+    "Satelite Map": satelite,
+    "Light Map": lightmap,
+    "Outdoors": outdoors
   };
     
   // console.log(quakes)
@@ -111,7 +113,7 @@ d3.json(queryUrl, function(data) {
   var myMap = L.map("map", {
     center: [0,0],
     zoom: 3,
-    layers: [lightmap, quakes]
+    layers: [satelite, quakes]
   });
 
   // // Create a control for our layers, add our overlay layers to it
@@ -157,13 +159,13 @@ d3.json(queryUrl, function(data) {
 
   // Pass our map layers into our layer control
   // Add the layer control to the map
-  // L.control.layers(baseMaps, overlayMaps, {
-  //   collapsed: false
-  // }).addTo(myMap);
+  L.control.layers(baseMaps, overlayMaps, {
+    collapsed: false
+  }).addTo(myMap);
 
-  // // Grabbing our GeoJSON data..
-  // d3.json(boundaryUrl, function(data) {
-  //   // Creating a GeoJSON layer with the retrieved data
-  //   L.geoJson(data).addTo(myMap);
-  // });
+  // Grabbing our GeoJSON data..
+  d3.json(boundaryUrl, function(data) {
+    // Creating a GeoJSON layer with the retrieved data
+    L.geoJson(data).addTo(myMap);
+  });
 });
